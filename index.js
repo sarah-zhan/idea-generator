@@ -22,7 +22,7 @@ document.getElementById('send-btn').addEventListener('click', () => {
 const fetchAPI = async () => {
 	const response = await openai.createCompletion({
 		model: 'text-davinci-003',
-		prompt: 'Sound enthusiastic in five words or less.'
+		prompt: textarea.value
 	});
 	movieBossText.innerText = response.data.choices[0].text.trim();
 };
