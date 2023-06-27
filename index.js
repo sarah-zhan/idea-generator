@@ -46,7 +46,7 @@ const fetchAPI = async (input) => {
 const fetchSynopsis = async (input) => {
 	const response = await openai.createCompletion({
 		model: 'text-davinci-003',
-		prompt: `Generate an engaging, professional and marketable movie synopsis based on the input and match the actor that fit the role.
+		prompt: `Generate an engaging, professional and marketable movie synopsis based on the input and match the actorthat fit the role. The synopsis should include actors names in brackets after each character.
 		###
 		input: Slow-witted Forrest Gump uses his optimism to beat all the odds in life.
 
@@ -60,6 +60,7 @@ const fetchSynopsis = async (input) => {
 	const synopsis = response.data.choices[0].text.trim();
 	document.getElementById('output-text').innerText = synopsis;
 	fetchTitle(synopsis);
+	fetchStars(synopsis);
 }
 
 const fetchTitle = async (synopsis) => {
@@ -76,6 +77,24 @@ const fetchTitle = async (synopsis) => {
 		max_tokens: 20,
 	});
 	document.getElementById('output-title').innerText =
+		response.data.choices[0].text.trim();
+	console.log(response);
+}
+
+const fetchStars = async (synopsis) => {
+	const response = await openai.createCompletion({
+		model: 'text-davinci-003',
+		prompt: `Generate the name of the main actors in the movie.
+		###
+		input: A big-headed daredevil fighter pilot goes back to school only to be sent on a deadly mission.
+		stars: Jack Nicholson, Paul Newman
+		###
+		input: ${synopsis}
+		stars:
+		`,
+		max_tokens: 30,
+	});
+	document.getElementById('output-stars').innerText =
 		response.data.choices[0].text.trim();
 	console.log(response);
 
