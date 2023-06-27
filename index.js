@@ -76,9 +76,11 @@ const fetchTitle = async (synopsis) => {
 		`,
 		max_tokens: 20,
 	});
+
+	const title = response.data.choices[0].text.trim();
 	document.getElementById('output-title').innerText =
-		response.data.choices[0].text.trim();
-	console.log(response);
+		title;
+	fetchImagePromt(title, synopsis);
 }
 
 const fetchStars = async (synopsis) => {
@@ -96,6 +98,27 @@ const fetchStars = async (synopsis) => {
 	});
 	document.getElementById('output-stars').innerText =
 		response.data.choices[0].text.trim();
-	console.log(response);
+}
 
+const fetchImagePromt = async (title, synopsis) => {
+	const response = await openai.createCompletion({
+		model: 'text-davinci-003',
+		prompt: `Generate a description of the movie based on the title and synopsis.
+		###
+		title: The Time Traveler's Wife
+		synopsis: Chicago librarian Henry De Tamble (Eric Bana) suffers from a rare genetic disorder that causes him to drift uncontrollably back and forth through time. On one of his sojourns, he meets the love of his life, Claire (Rachel McAdams), and they marry. But the problems and complexities of any relationship are multiplied by Henry's inability to remain in one time and place, so that he and his beloved are continually out of sync.
+		image description: Claire and Henry are hugging each other, and Henry's head is on Claire's shoulder. Claire is watch to the front. Both of them are on the left. The title and the names of the actors are written on the top-right conner. The background is yellow and blue.
+		###
+		title: zero Earth
+		synopsis: When bodyguard Kob (Daniel Radcliffe) is recruited by the United Nations to save planet Earth from the sinister Simm (John Malkovich), an alien lord with a plan to take over the world, he reluctantly accepts the challenge. With the help of his loyal sidekick, a brave and resourceful hamster named Gizmo (Gaten Matarazzo), Kob embarks on a perilous mission to destroy Simm. Along the way, he discovers a newfound courage and strength as he battles Simm's merciless forces. With the fate of the world in his hands, Kob must find a way to defeat the alien lord and save the planet.
+		image description: A tired and bloodied bodyguard and hamster standing atop a tall skyscraper, looking out over a vibrant cityscape, with a rainbow in the sky above them.
+		###
+		title: ${title}
+		synopsis: ${synopsis}
+		image description:
+		`,
+		temperature: 0.8,
+		max_tokens: 100,
+	});
+	console.log(response.data.choices[0].text.trim());
 }
