@@ -17,7 +17,7 @@ document.getElementById('send-btn').addEventListener('click', () => {
 		setupInputContainer.innerHTML = `<img src="images/loading.svg" class="loading" id="loading">`;
 		movieBossText.innerText = `Ok, just wait a second while my digital brain digests that...`;
 		fetchAPI(userInput);
-		// fetchSynopsis(userInput);
+		fetchSynopsis(userInput);
 	}
 
 
@@ -46,7 +46,7 @@ const fetchAPI = async (input) => {
 const fetchSynopsis = async (input) => {
 	const response = await openai.createCompletion({
 		model: 'text-davinci-003',
-		prompt: `Generate an engaging, professional and marketable movie synopsis based on the input.
+		prompt: `Generate an engaging, professional and marketable movie synopsis based on the input and match the actor that fit the role.
 		###
 		input: Slow-witted Forrest Gump uses his optimism to beat all the odds in life.
 
@@ -57,10 +57,26 @@ const fetchSynopsis = async (input) => {
 		`,
 		max_tokens: 700,
 	});
-	// document.getElementsByClassName('output-container').style.display = 'block';
-	document.getElementById('output-text').innerText =
-		response.data.choices[0].text.trim();
-	console.log(response);
+	const synopsis = response.data.choices[0].text.trim();
+	document.getElementById('output-text').innerText = synopsis;
+	fetchTitle(synopsis);
 }
 
+const fetchTitle = async (synopsis) => {
+	const response = await openai.createCompletion({
+		model: 'text-davinci-003',
+		prompt: `Generate a title for the synopsis.
+		###
+		input: A big-headed daredevil fighter pilot goes back to school only to be sent on a deadly mission.
+		title: Top Gun
+		###
+		input: ${synopsis}
+		title:
+		`,
+		max_tokens: 20,
+	});
+	document.getElementById('output-title').innerText =
+		response.data.choices[0].text.trim();
+	console.log(response);
 
+}
