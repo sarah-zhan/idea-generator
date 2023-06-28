@@ -9,7 +9,6 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-
 document.getElementById('send-btn').addEventListener('click', () => {
 	const setupTextarea = document.getElementById('setup-textarea');
 	if (setupTextarea.value) {
@@ -19,11 +18,9 @@ document.getElementById('send-btn').addEventListener('click', () => {
 		fetchAPI(userInput);
 		fetchSynopsis(userInput);
 	}
-
-
 });
 
-const fetchAPI = async (input) => {
+const fetchAPI = async input => {
 	const response = await openai.createCompletion({
 		model: 'text-davinci-003',
 		prompt: `Generate a 20 words message to enthusiastically sounds interesting and that you need some minutes to think about it.
@@ -40,10 +37,10 @@ const fetchAPI = async (input) => {
 		max_tokens: 60,
 	});
 	movieBossText.innerText = response.data.choices[0].text.trim();
-	console.log(response)
+	// console.log(response)
 };
 
-const fetchSynopsis = async (input) => {
+const fetchSynopsis = async input => {
 	const response = await openai.createCompletion({
 		model: 'text-davinci-003',
 		prompt: `Generate an engaging, professional and marketable movie synopsis based on the input and match the actorthat fit the role. The synopsis should include actors names in brackets after each character.
@@ -61,9 +58,9 @@ const fetchSynopsis = async (input) => {
 	document.getElementById('output-text').innerText = synopsis;
 	fetchTitle(synopsis);
 	fetchStars(synopsis);
-}
+};
 
-const fetchTitle = async (synopsis) => {
+const fetchTitle = async synopsis => {
 	const response = await openai.createCompletion({
 		model: 'text-davinci-003',
 		prompt: `Generate a title for the synopsis.
@@ -78,12 +75,11 @@ const fetchTitle = async (synopsis) => {
 	});
 
 	const title = response.data.choices[0].text.trim();
-	document.getElementById('output-title').innerText =
-		title;
+	document.getElementById('output-title').innerText = title;
 	fetchImagePromt(title, synopsis);
-}
+};
 
-const fetchStars = async (synopsis) => {
+const fetchStars = async synopsis => {
 	const response = await openai.createCompletion({
 		model: 'text-davinci-003',
 		prompt: `Generate the name of the main actors in the movie.
@@ -98,7 +94,7 @@ const fetchStars = async (synopsis) => {
 	});
 	document.getElementById('output-stars').innerText =
 		response.data.choices[0].text.trim();
-}
+};
 
 const fetchImagePromt = async (title, synopsis) => {
 	const response = await openai.createCompletion({
@@ -107,7 +103,7 @@ const fetchImagePromt = async (title, synopsis) => {
 		###
 		title: The Time Traveler's Wife
 		synopsis: Chicago librarian Henry De Tamble (Eric Bana) suffers from a rare genetic disorder that causes him to drift uncontrollably back and forth through time. On one of his sojourns, he meets the love of his life, Claire (Rachel McAdams), and they marry. But the problems and complexities of any relationship are multiplied by Henry's inability to remain in one time and place, so that he and his beloved are continually out of sync.
-		image description: Claire and Henry are hugging each other, and Henry's head is on Claire's shoulder. Claire is watch to the front. Both of them are on the left. The title and the names of the actors are written on the top-right conner. The background is yellow and blue.
+		image description: Claire and Henry are hugging each other, and Henry's head is on Claire's shoulder. Claire is watch to the front. Both of them are on the left. The background is yellow and blue.
 		###
 		title: zero Earth
 		synopsis: When bodyguard Kob (Daniel Radcliffe) is recruited by the United Nations to save planet Earth from the sinister Simm (John Malkovich), an alien lord with a plan to take over the world, he reluctantly accepts the challenge. With the help of his loyal sidekick, a brave and resourceful hamster named Gizmo (Gaten Matarazzo), Kob embarks on a perilous mission to destroy Simm. Along the way, he discovers a newfound courage and strength as he battles Simm's merciless forces. With the fate of the world in his hands, Kob must find a way to defeat the alien lord and save the planet.
@@ -120,5 +116,19 @@ const fetchImagePromt = async (title, synopsis) => {
 		temperature: 0.8,
 		max_tokens: 100,
 	});
-	console.log(response.data.choices[0].text.trim());
-}
+	const imageDescription = response.data.choices[0].text.trim();
+	fetchImage(imageDescription);
+};
+
+const fetchImage = async imageDescription => {
+	const response = await openai.createImage({
+		prompt: `${imageDescription}. There should be no text in this image.`,
+		n: 1,
+		size: '256x256',
+		response_format: 'url',
+	});
+	console.log(response);
+	document.getElementById(
+		'output-img-container'
+	).innerHTML = `<img src="${response.data.data[0].url}">`;
+};
