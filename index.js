@@ -122,13 +122,21 @@ const fetchImagePromt = async (title, synopsis) => {
 
 const fetchImage = async imageDescription => {
 	const response = await openai.createImage({
-		prompt: `${imageDescription}. There should be no text in this image.`,
+		prompt: `${imageDescription}.`,
 		n: 1,
 		size: '256x256',
 		response_format: 'url',
 	});
-	console.log(response);
+
 	document.getElementById(
 		'output-img-container'
 	).innerHTML = `<img src="${response.data.data[0].url}">`;
+
+	setupInputContainer.innerHTML = `<button id='view-pitch-btn' class='view-pitch-btn'>View</button>'`;
+
+	document.getElementById('view-pitch-btn').addEventListener('click', () => {
+		document.getElementById('setup-container').style.display = 'none';
+		document.getElementById('output-container').style.display = 'flex';
+	})
+
 };
