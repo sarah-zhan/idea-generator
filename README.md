@@ -1,11 +1,15 @@
 # idea-generator
+
 ![Alt text](<images/AI generate movie ideas.gif>)
+
 ## Descriptions
+
 - Chatbot style
-- Use OpenAPI to generate movie ideas
+- Use OpenAI to generate movie ideas
 - Engine: "text-davinci-003"
 
 ### My thoughts
+
 - I provide a sentence
 
   - AI generates a photo
@@ -27,7 +31,6 @@ Quick start:
 ```
 $ npm install
 $ npm start
-````
+```
 
 Head over to https://vitejs.dev/ to learn more about using vite
-
